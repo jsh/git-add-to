@@ -1,0 +1,11 @@
+A command to create a test repository
+
+Command creates repos with arbitrary commits for testing.
+
+  git-add-to foobar.git init
+
+destructively creates foobar.git with the initial commit of a README.
+
+  git-add-to foobar.git {0..9}
+
+adds commits {0..9}
