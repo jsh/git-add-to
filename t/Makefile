@@ -10,4 +10,8 @@ all_tests := $(basename $(wildcard *.t) .t)
 # run all the tests in this directory
 default: $(all_tests)
 
+clean:
+	rm -rf repositories testrepo*
+
 .PHONY: default
+
