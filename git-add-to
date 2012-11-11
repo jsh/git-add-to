@@ -1,0 +1,52 @@
+#!/bin/bash -eu
+
+die() { echo $* >&2; exit -1; }
+
+exec > /dev/null
+
+usage="usage: $0 reponame [commits]"
+[ $# -lt 2 ] && die $usage
+
+repo=${1:?$usage}
+repo=${repo/.git/}
+readme=README.$repo
+shift
+
+initialize_blank_repo=""
+if [ "$1" = "init" ]; then
+  initialize_blank_repo=1
+  shift
+fi
+
+export commits=${*:-}
+
+create-repo() {
+  local repo=$1
+  mkdir $repo
+  pushd $repo
+  touch $readme
+  git init
+  git add .
+  git commit -m"initial"
+  popd
+  git clone --bare $repo
+  rm -rf $repo
+  git clone file://$PWD/$repo.git 
+}
+
+if [ "$initialize_blank_repo" ]; then
+  rm -rf $repo
+fi
+
+if ! [ -d $repo ]; then
+  create-repo $repo
+fi
+
+pushd $repo
+for i in $commits; do
+  echo commit $i >> $readme
+  git add .
+  git commit -m"Commit $i"
+done
+
+git push
