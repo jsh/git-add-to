@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
-git-add-to >/dev/null |& grep -q usage
-git-add-to tree >/dev/null |& grep -q usage
+git-add-to |& grep -q usage && true
+git-add-to tree |& grep -q usage && true
