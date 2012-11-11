@@ -1,3 +1,3 @@
-#!/bin/bash -eux
+#!/bin/bash -eu
 
-echo hello, world
+echo hello, world > /dev/null
