@@ -4,12 +4,14 @@ die() { echo $* >&2; exit -1; }
 
 exec > /dev/null
 
-usage="usage: $0 reponame [commits]"
+usage="usage: $0 <somerepo>.git [commits]"
 [ $# -lt 2 ] && die $usage
 
 repo=${1:?$usage}
-repo=${repo/.git/}
-readme=README.$repo
+clone=${repo/.git/}
+[ "$clone" = "$repo" ] && die $usage   # reponame must end in '.git'
+
+readme=README.$clone
 shift
 
 initialize_blank_repo=""
