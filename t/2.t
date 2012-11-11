@@ -40,11 +40,3 @@ git-add-to $repo init $commits
 for commit in $commits; do
   grep -q $commit $clone/README*
 done
-
-_testname put repo in another directory
-
-commits="0"
-mkdir repositories
-products+=" repositories"
-git-add-to repositories/$repo init $commits
-grep -q $commit $clone/README*
