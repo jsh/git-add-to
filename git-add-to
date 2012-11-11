@@ -8,8 +8,10 @@ usage="usage: $0 <somerepo>.git [commits]"
 [ $# -lt 2 ] && die $usage
 
 repo=${1:?$usage}
-clone=${repo/.git/}
-[ "$clone" = "$repo" ] && die $usage   # reponame must end in '.git'
+[ "${repo%.git}" = "$repo" ] && die $usage   # reponame must end in '.git'
+repo=${repo#file://} # trim off "file://" if it's there
+
+clone=$(basename ${repo/.git/}) # local copy
 
 readme=README.$clone
 shift
@@ -22,29 +24,31 @@ fi
 
 export commits=${*:-}
 
-create-repo() {
-  local repo=$1
-  mkdir $repo
-  pushd $repo
+create-repo-from() {
+  local clone=$1
+  mkdir -p $clone
+  pushd $clone
   touch $readme
   git init
   git add .
   git commit -m"initial"
   popd
-  git clone --bare $repo
-  rm -rf $repo
-  git clone file://$PWD/$repo.git 
+  git clone --bare $clone $repo
+  rm -rf $clone
+  git clone file://$( readlink -f $repo )
 }
 
 if [ "$initialize_blank_repo" ]; then
-  rm -rf $repo
+  rm -rf $repo $clone
 fi
 
 if ! [ -d $repo ]; then
-  create-repo $repo
+  create-repo-from $clone
 fi
 
-pushd $repo
+pushd $clone
+[ -d .git ] && git pull # grab any updates
+
 for i in $commits; do
   echo commit $i >> $readme
   git add .
