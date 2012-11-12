@@ -1,4 +1,5 @@
 _testname() { echo == test $*; }
+die() { echo $* >&2; exit -1; }
 
 repo=testrepo.git
 clone=testrepo
