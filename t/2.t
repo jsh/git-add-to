@@ -9,9 +9,9 @@ rm -rf $products
 git-add-to $repo init
 [ -d $repo ] && [ -d $clone ]
 [ -x $clone/README ] && ! [ -s $clone/README* ]
-pushd $clone
+cd $clone
 git show | grep -q initial
-popd
+cd ~-
 
 _testname overwrite an existing repo
 sleep 1
@@ -27,11 +27,11 @@ git-add-to $repo XXX
 # verify that they aren't newly created
 ! ls -lt $products | sort | diff - <( ls -ult $products | sort )
 
-pushd $clone
-git reset --hard origin/master
+cd $clone
+git reset -q --hard origin/master
 git clean -dfx
-grep XXX README*
-popd
+grep -q XXX README*
+cd ~-
 
 _testname check multiple commits
 

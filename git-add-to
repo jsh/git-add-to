@@ -1,9 +1,12 @@
 #!/bin/bash -eu
 
+# utility routine
 die() { echo $* >&2; exit -1; }
 
+# error messages only
 exec > /dev/null
 
+# parse args
 usage="usage: $0 <somerepo>.git [commits]"
 [ $# -lt 2 ] && die $usage
 
@@ -24,20 +27,22 @@ fi
 
 export commits=${*:-}
 
+# create a bare repo from an existing working copy
 create-repo-from() {
   local clone=$1
   mkdir -p $clone
-  pushd $clone
+  cd $clone
   touch $readme
-  git init
+  git init -q
   git add .
-  git commit -m"initial"
-  popd
-  git clone --bare $clone $repo
+  git commit -q -m"initial"
+  cd ~-
+  git clone -q --bare $clone $repo
   rm -rf $clone
-  git clone file://$( readlink -f $repo )
+  git clone -q file://$( readlink -f $repo )
 }
 
+# "init" arg says "wipe out old stuff, start from scratch"
 if [ "$initialize_blank_repo" ]; then
   rm -rf $repo $clone
 fi
@@ -46,13 +51,14 @@ if ! [ -d $repo ]; then
   create-repo-from $clone
 fi
 
-pushd $clone
-[ -d .git ] && git pull # grab any updates
+# bring the clone up-to-date, then add new commits and push
+cd $clone
+[ -d .git ] && git pull -q # grab any updates
 
 for i in $commits; do
   echo commit $i >> $readme
   git add .
-  git commit -m"Commit $i"
+  git commit -q -m"Commit $i"
 done
 
-git push
+git push -q
