@@ -6,7 +6,49 @@ die() { echo $* >&2; exit -1; }
 # error messages only
 exec > /dev/null
 
-source $(dirname $(readlink -f $0))/set-vars-from-args.sh
+## Set variables from arguments
+# source $(dirname $(readlink -f $0))/set-vars-from-args.sh
+{
+  ## what follows, up to the close-curly,
+  ## is the contents of set-vars-from-args.sh,
+  ## incorporated so this script can be installed directly in /usr/lib/git-core/
+
+  # parse args
+  usage="usage: $0 [-t <seconds>] <somerepo>.git [init] commit1 [commit2 ...]"
+
+  # flag ('-X') parsing
+  seconds=0
+  while getopts ":t:" opt; do
+    case $opt in
+      t) seconds=$OPTARG ;;
+      \?) die $usage ;;
+      :) die $usage ;;
+    esac
+  done
+  shift $(( OPTIND - 1 ))
+
+  # now the other args
+  [ $# -lt 2 ] && die $usage
+
+  repo=${1:?$usage}
+  [ "${repo%.git}" = "$repo" ] && die $usage   # reponame must end in '.git'
+  repo=${repo#file://} # trim off "file://" if it's there
+
+  clone=$(basename ${repo/.git/}) # local copy
+
+  readme=README.$clone
+  shift
+
+  initialize_blank_repo="false"
+  if [ "$1" = "init" ]; then
+    initialize_blank_repo="true"
+    shift
+  fi
+
+  export commits=${*:-}
+}
+
+# source $(dirname $(readlink -f $0))/set-vars-from-args.sh
 
 # create a bare repo from an existing working copy
 create-repo-from() {
