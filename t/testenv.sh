@@ -1,4 +1,4 @@
-_testname() { echo == test $*; }
+_testname() { echo == test: $*; }
 die() { echo $* >&2; exit -1; }
 
 repo=testrepo.git
