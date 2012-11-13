@@ -4,7 +4,7 @@ clean:
 	rm -rf testrepo* */testrepo*
 
 install:
-	sudo ln git-add-to /usr/lib/git-core
+	install git-add-to /usr/lib/git-core
 
 test:
 	$(MAKE) -C t
