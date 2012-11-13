@@ -1,4 +1,4 @@
-default: clean
+default: test
 
 clean:
 	rm -rf testrepo* */testrepo*
