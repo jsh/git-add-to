@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 # utility routine
-die() { echo $* >&2; exit -1; }
+die() { echo "$*" >&2; exit -1; }
 
 # error messages only
 exec > /dev/null
@@ -14,7 +14,7 @@ exec > /dev/null
   ## incorporated so this script can be installed directly in /usr/lib/git-core/
 
   # parse args
-  usage="usage: $0 [-t <seconds>] <somerepo>.git [init] commit1 [commit2 ...]"
+  usage="usage: $0 [ -t <seconds> ] <somerepo>.git [ init ] commit1 [ commit2 ... ]"
 
   # flag ('-X') parsing
   seconds=0
