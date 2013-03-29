@@ -12,3 +12,5 @@ adds commits {0..9}
 
 After the command completes, there is also a clone of the repo
 in the current, working directory to facilitate further work.
+
+Add a test line.
